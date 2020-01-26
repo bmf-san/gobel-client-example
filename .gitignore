@@ -1,0 +1,10 @@
+# app
+/app/app
+/app/.env
+.DS_STORE
+/app/log/*
+!/app/log/.gitkeep
+
+# editor
+.vscode/
+launch.json

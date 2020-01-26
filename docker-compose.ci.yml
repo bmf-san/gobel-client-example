@@ -1,0 +1,10 @@
+version: "3"
+services:
+  app:
+    container_name: "gobel-client-example"
+    build:
+        context: "./app"
+        dockerfile: "Dockerfile.ci"
+    ports:
+      - "8081:8081"
+    command: ./app
