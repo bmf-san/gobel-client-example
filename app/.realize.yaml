@@ -1,0 +1,23 @@
+settings:
+  legacy:
+    force: true
+    interval: 0s
+schema:
+- name: gobel-client-example
+  path: .
+  commands:
+    build:
+      status: true
+      method: go build -o /gobel-client-example
+    run:
+      status: true
+      method: /gobel-client-example
+  watcher:
+    extensions:
+    - go
+    paths:
+    - /
+    ignored_paths:
+    - .git
+    - .realize
+    - vendor
