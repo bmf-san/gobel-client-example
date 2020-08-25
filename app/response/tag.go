@@ -9,12 +9,13 @@ import (
 
 // TagIndex is a data for index view.
 type TagIndex struct {
-	Tags *model.Tags
+	Tags       *model.Tags
+	Pagination *model.Pagination
 }
 
 // ExecuteTagIndex responses a index view.
 func (r *Response) ExecuteTagIndex(w http.ResponseWriter, t *TagIndex) error {
-	tpl := template.Must(template.ParseFiles("view/layout/base.tpl", "view/tag/index.tpl"))
+	tpl := template.Must(template.ParseFiles("view/layout/base.tpl", "view/tag/index.tpl", "view/partial/pagination.tpl", "view/partial/pagination.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", t); err != nil {
 		return err
 	}
