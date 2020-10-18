@@ -1,5 +1,5 @@
-// TODO: responseの実装終わったらやる
-// package middleware
+// TODO: Implement csrf
+package middleware
 
 // import (
 // 	"context"

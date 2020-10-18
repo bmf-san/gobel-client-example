@@ -1,4 +1,4 @@
-{{define "base"}}
+{{ define "base" }}
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -21,10 +21,20 @@
 </head>
 
 <body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/posts">Posts</a></li>
+            <li><a href="/categories">Categories</a></li>
+            <li><a href="/tags">Tags</a></li>
+            <li><a href="/sitemap">Sitemap</a></li>
+            <li><a href="/feed">Feed</a></li>
+        </ul>
+    </nav>
     <section>
-    {{template "body" .}}
+    {{ template "body" . }}
     </section>
 </body>
 
 </html>
-{{end}}
+{{ end }}

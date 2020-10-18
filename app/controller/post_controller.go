@@ -31,7 +31,7 @@ func (pc *PostController) Index(w http.ResponseWriter, r *http.Request) {
 	const defaultPage = 1
 	const defaultLimit = 10
 
-	_, body, err := pc.Client.GetPosts(r, defaultPage, defaultLimit)
+	resp, body, err := pc.Client.GetPosts(r, defaultPage, defaultLimit)
 	if err != nil {
 		pc.Logger.Error(err.Error())
 		pc.Response.Error(w, http.StatusInternalServerError)
@@ -47,8 +47,16 @@ func (pc *PostController) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var pagination model.Pagination
+	if err := pagination.Convert(resp.Header); err != nil {
+		pc.Logger.Error(err.Error())
+		pc.Response.Error(w, http.StatusInternalServerError)
+		return
+	}
+
 	if err = pc.Response.ExecutePostIndex(w, &response.PostIndex{
-		Posts: &posts,
+		Posts:      &posts,
+		Pagination: &pagination,
 	}); err != nil {
 		pc.Logger.Error(err.Error())
 		pc.Response.Error(w, http.StatusInternalServerError)
@@ -61,7 +69,7 @@ func (pc *PostController) IndexByCategory(w http.ResponseWriter, r *http.Request
 	const defaultPage = 1
 	const defaultLimit = 10
 
-	_, body, err := pc.Client.GetPostsByCategory(r, defaultPage, defaultLimit)
+	resp, body, err := pc.Client.GetPostsByCategory(r, defaultPage, defaultLimit)
 	if err != nil {
 		pc.Logger.Error(err.Error())
 		pc.Response.Error(w, http.StatusInternalServerError)
@@ -76,8 +84,16 @@ func (pc *PostController) IndexByCategory(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	var pagination model.Pagination
+	if err := pagination.Convert(resp.Header); err != nil {
+		pc.Logger.Error(err.Error())
+		pc.Response.Error(w, http.StatusInternalServerError)
+		return
+	}
+
 	if err = pc.Response.ExecutePostIndexByCategory(w, &response.PostIndexByCategory{
-		Posts: &posts,
+		Posts:      &posts,
+		Pagination: &pagination,
 	}); err != nil {
 		pc.Logger.Error(err.Error())
 		pc.Response.Error(w, http.StatusInternalServerError)
@@ -90,7 +106,7 @@ func (pc *PostController) IndexByTag(w http.ResponseWriter, r *http.Request) {
 	const defaultPage = 1
 	const defaultLimit = 10
 
-	_, body, err := pc.Client.GetPostsByCategory(r, defaultPage, defaultLimit)
+	resp, body, err := pc.Client.GetPostsByTag(r, defaultPage, defaultLimit)
 	if err != nil {
 		pc.Logger.Error(err.Error())
 		pc.Response.Error(w, http.StatusInternalServerError)
@@ -106,8 +122,16 @@ func (pc *PostController) IndexByTag(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var pagination model.Pagination
+	if err := pagination.Convert(resp.Header); err != nil {
+		pc.Logger.Error(err.Error())
+		pc.Response.Error(w, http.StatusInternalServerError)
+		return
+	}
+
 	if err = pc.Response.ExecutePostIndexByTag(w, &response.PostIndexByTag{
-		Posts: &posts,
+		Posts:      &posts,
+		Pagination: &pagination,
 	}); err != nil {
 		pc.Logger.Error(err.Error())
 		pc.Response.Error(w, http.StatusInternalServerError)

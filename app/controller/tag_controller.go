@@ -31,7 +31,7 @@ func (tc *TagController) Index(w http.ResponseWriter, r *http.Request) {
 	const defaultPage = 1
 	const defaultLimit = 10
 
-	_, body, err := tc.Client.GetTags(r, defaultPage, defaultLimit)
+	resp, body, err := tc.Client.GetTags(r, defaultPage, defaultLimit)
 	if err != nil {
 		tc.Logger.Error(err.Error())
 		tc.Response.Error(w, http.StatusInternalServerError)
@@ -47,8 +47,16 @@ func (tc *TagController) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var pagination model.Pagination
+	if err := pagination.Convert(resp.Header); err != nil {
+		tc.Logger.Error(err.Error())
+		tc.Response.Error(w, http.StatusInternalServerError)
+		return
+	}
+
 	if err = tc.Response.ExecuteTagIndex(w, &response.TagIndex{
-		Tags: &tags,
+		Tags:       &tags,
+		Pagination: &pagination,
 	}); err != nil {
 		tc.Logger.Error(err.Error())
 		tc.Response.Error(w, http.StatusInternalServerError)

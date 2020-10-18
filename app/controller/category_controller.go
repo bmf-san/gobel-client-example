@@ -31,7 +31,7 @@ func (cc *CategoryController) Index(w http.ResponseWriter, r *http.Request) {
 	const defaultPage = 1
 	const defaultLimit = 10
 
-	_, body, err := cc.Client.GetCategories(r, defaultPage, defaultLimit)
+	resp, body, err := cc.Client.GetCategories(r, defaultPage, defaultLimit)
 	if err != nil {
 		cc.Logger.Error(err.Error())
 		cc.Response.Error(w, http.StatusInternalServerError)
@@ -47,8 +47,16 @@ func (cc *CategoryController) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var pagination model.Pagination
+	if err := pagination.Convert(resp.Header); err != nil {
+		cc.Logger.Error(err.Error())
+		cc.Response.Error(w, http.StatusInternalServerError)
+		return
+	}
+
 	if err = cc.Response.ExecuteCategoryIndex(w, &response.CategoryIndex{
 		Categories: &categories,
+		Pagination: &pagination,
 	}); err != nil {
 		cc.Logger.Error(err.Error())
 		cc.Response.Error(w, http.StatusInternalServerError)
