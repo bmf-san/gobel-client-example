@@ -11,10 +11,6 @@ This is an example for client application of gobel.
 - [gobel-client-example](https://github.com/bmf-san/gobel-client-example)
 - [gobel-example](https://github.com/bmf-san/gobel-example)
 
-# Requirements
-- Golang1.13
-- Docker Compose
-
 # Get started
 Before you start, you need to clone [gobel-api](https://github.com/bmf-san/gobel-api).
 
