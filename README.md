@@ -11,23 +11,39 @@ This is an example for client application of gobel.
 - [gobel-client-example](https://github.com/bmf-san/gobel-client-example)
 - [gobel-example](https://github.com/bmf-san/gobel-example)
 
-# Requirements
-- Golang1.13
-- Docker Compose
-
 # Get started
 Before you start, you need to clone [gobel-api](https://github.com/bmf-san/gobel-api).
 
-`cp .env_example .env`
 
-`make docker-compose-build`
+Before you start, you need to clone [gobel-api](https://github.com/bmf-san/gobel-api).
 
-`make docker-compose-up` or `make docker-compose-up-d`
-Add hosts to `/etc/hosts`.
+## Set up a env file.
+```
+cp .env_example .env
+```
 
+## Edit a host file.
 ```
 127.0.0.1 gobel-client-example.local
 ```
+
+## Build containers
+```
+make docker-compose-build
+```
+
+## Run containers
+```
+make docker-compose-up
+```
+
+or
+
+```
+make docker-compose-up-d
+```
+
+Then go to `gobel-client.example.local:81`
 
 # Contributing
 We welcome your issue or pull request from everyone.
