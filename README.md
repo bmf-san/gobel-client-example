@@ -14,9 +14,6 @@ This is an example for client application of gobel.
 # Get started
 Before you start, you need to clone [gobel-api](https://github.com/bmf-san/gobel-api).
 
-
-Before you start, you need to clone [gobel-api](https://github.com/bmf-san/gobel-api).
-
 ## Set up a env file.
 ```
 cp .env_example .env
