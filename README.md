@@ -14,12 +14,12 @@ This is an example for client application of gobel.
 # Get started
 Before you start, you need to clone [gobel-api](https://github.com/bmf-san/gobel-api).
 
-## Edit an env file.
+## Edit an env file
 ```
 cp .env_example .env
 ```
 
-## Edit a host file.
+## Edit a host file
 ```
 127.0.0.1 gobel-client-example.local
 ```
