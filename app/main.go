@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/bmf-san/gobel-client-example/app/api"
@@ -12,17 +13,12 @@ import (
 	"github.com/bmf-san/goblin"
 )
 
-func init() {
-	location := os.Getenv("TIME_ZONE")
-	loc, err := time.LoadLocation(location)
-	if err != nil {
-		loc = time.FixedZone(location, 9*60*60)
-	}
-	time.Local = loc
-}
-
 func main() {
-	logger := logger.NewLogger()
+	threshold, _ := strconv.Atoi(os.Getenv("LOG_THRESHOLD"))
+	offset, _ := strconv.Atoi(os.Getenv("LOG_TIME_ZONE_OFFSET"))
+	location := time.FixedZone(os.Getenv("TIME_ZONE"), offset)
+
+	logger := logger.NewLogger(threshold, location)
 	client := api.NewClient()
 	response := response.NewResponse()
 
