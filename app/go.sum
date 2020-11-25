@@ -5,6 +5,8 @@ github.com/bmf-san/goblin v0.0.0-20200812051731-4ca3dc28faa3 h1:eidWLsul6JXYNrV6
 github.com/bmf-san/goblin v0.0.0-20200812051731-4ca3dc28faa3/go.mod h1:/rc0S2icYigzs9pjMRyCfYj9xHEREpVKqll+6LLz15w=
 github.com/bmf-san/golem v0.0.0-20200718182453-066c8e70e46e h1:WSywsXMGFUlb5LPQQ9C3diiL11keP+m59rPPz5ZnOo0=
 github.com/bmf-san/golem v0.0.0-20200718182453-066c8e70e46e/go.mod h1:WO0mipXeyFiPkU+4uLuovMQtMZLf4VtrrJyXpdcZYoQ=
+github.com/bmf-san/golem v0.0.0-20201124170718-57b487ad1eb5 h1:nz15EhpQ6Yh6mexMUy2nRJnWX5EEOqV9QXz7aqasqH4=
+github.com/bmf-san/golem v0.0.0-20201124170718-57b487ad1eb5/go.mod h1:WO0mipXeyFiPkU+4uLuovMQtMZLf4VtrrJyXpdcZYoQ=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/go-playground/assert/v2 v2.0.1 h1:MsBgLAaY856+nPRTKrp3/OZK38U/wa0CcBYNjji3q3A=
 github.com/go-playground/assert/v2 v2.0.1/go.mod h1:VDjEfimB/XKnb+ZQfWdccd7VUvScMdVu0Titje2rxJ4=
