@@ -3,6 +3,7 @@
 [![CircleCI](https://circleci.com/gh/bmf-san/gobel-client-example.svg?style=svg)](https://circleci.com/gh/bmf-san/gobel-client-example)
 
 Gobel is a headless cms built with golang. 
+
 This is an example for client application of gobel.
 
 # gobel
@@ -10,6 +11,7 @@ This is an example for client application of gobel.
 - [gobel-admin-client](https://github.com/bmf-san/gobel-admin-client)
 - [gobel-client-example](https://github.com/bmf-san/gobel-client-example)
 - [gobel-example](https://github.com/bmf-san/gobel-example)
+- [gobel-ops-example](https://github.com/bmf-san/gobel-ops-example)
 
 # Get started
 Before you start, you need to clone [gobel-api](https://github.com/bmf-san/gobel-api).
