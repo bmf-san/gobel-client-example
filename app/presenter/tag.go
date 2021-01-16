@@ -1,4 +1,4 @@
-package response
+package presenter
 
 import (
 	"html/template"
@@ -14,7 +14,7 @@ type TagIndex struct {
 }
 
 // ExecuteTagIndex responses a index view.
-func (r *Response) ExecuteTagIndex(w http.ResponseWriter, t *TagIndex) error {
+func (p *Presenter) ExecuteTagIndex(w http.ResponseWriter, t *TagIndex) error {
 	tpl := template.Must(template.ParseFiles("view/layout/base.tpl", "view/tag/index.tpl", "view/partial/pagination.tpl", "view/partial/pagination.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", t); err != nil {
 		return err

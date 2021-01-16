@@ -1,4 +1,4 @@
-package response
+package presenter
 
 import (
 	"html/template"
@@ -12,7 +12,7 @@ type ErrorData struct {
 }
 
 // Error responses a error view.
-func (r *Response) Error(w http.ResponseWriter, code int) {
+func (p *Presenter) Error(w http.ResponseWriter, code int) {
 	e := &ErrorData{
 		Code:    code,
 		Message: handleErrorMessage(code),

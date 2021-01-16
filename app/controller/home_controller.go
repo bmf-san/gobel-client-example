@@ -5,30 +5,30 @@ import (
 
 	"github.com/bmf-san/gobel-client-example/app/api"
 	"github.com/bmf-san/gobel-client-example/app/logger"
-	"github.com/bmf-san/gobel-client-example/app/response"
+	"github.com/bmf-san/gobel-client-example/app/presenter"
 )
 
 // A HomeController is a controller for a home.
 type HomeController struct {
-	Logger   *logger.Logger
-	Client   *api.Client
-	Response *response.Response
+	Logger    *logger.Logger
+	Client    *api.Client
+	Presenter *presenter.Presenter
 }
 
 // NewHomeController creates a HomeController.
-func NewHomeController(logger *logger.Logger, client *api.Client, response *response.Response) *HomeController {
+func NewHomeController(logger *logger.Logger, client *api.Client, presenter *presenter.Presenter) *HomeController {
 	return &HomeController{
-		Logger:   logger,
-		Client:   client,
-		Response: response,
+		Logger:    logger,
+		Client:    client,
+		Presenter: presenter,
 	}
 }
 
 // Index displays a listing of the resource.
 func (hc *HomeController) Index(w http.ResponseWriter, r *http.Request) {
-	if err := hc.Response.ExecuteHomeIndex(w); err != nil {
+	if err := hc.Presenter.ExecuteHomeIndex(w); err != nil {
 		hc.Logger.Error(err.Error())
-		hc.Response.Error(w, http.StatusInternalServerError)
+		hc.Presenter.Error(w, http.StatusInternalServerError)
 		return
 	}
 }

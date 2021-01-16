@@ -3,40 +3,46 @@ package controller
 import (
 	"encoding/json"
 	"encoding/xml"
+	"io/ioutil"
 	"net/http"
-	"os"
 
 	"github.com/bmf-san/gobel-client-example/app/api"
 	"github.com/bmf-san/gobel-client-example/app/logger"
 	"github.com/bmf-san/gobel-client-example/app/model"
-	"github.com/bmf-san/gobel-client-example/app/response"
+	"github.com/bmf-san/gobel-client-example/app/presenter"
 )
 
 // A SitemapController is a controller for a sitemap.
 type SitemapController struct {
-	Logger   *logger.Logger
-	Client   *api.Client
-	Response *response.Response
+	Logger    *logger.Logger
+	Client    *api.Client
+	Presenter *presenter.Presenter
 }
 
 // NewSitemapController creates a SitemapController.
-func NewSitemapController(logger *logger.Logger, client *api.Client, response *response.Response) *SitemapController {
+func NewSitemapController(logger *logger.Logger, client *api.Client, presenter *presenter.Presenter) *SitemapController {
 	return &SitemapController{
-		Logger:   logger,
-		Client:   client,
-		Response: response,
+		Logger:    logger,
+		Client:    client,
+		Presenter: presenter,
 	}
 }
 
 // Index displays a listing of the resource.
 func (si *SitemapController) Index(w http.ResponseWriter, r *http.Request) {
-	const defaultPage = 1
-	const defaultLimit = 99999
-
-	_, body, err := si.Client.GetPosts(r, defaultPage, defaultLimit)
+	// NOTE: Since api does not support getting all items, so taking a rough method.
+	resp, err := si.Client.GetPosts(1, 99999)
 	if err != nil {
 		si.Logger.Error(err.Error())
-		si.Response.Error(w, http.StatusInternalServerError)
+		si.Presenter.Error(w, http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		si.Logger.Error(err.Error())
+		si.Presenter.Error(w, http.StatusInternalServerError)
 		return
 	}
 
@@ -44,14 +50,23 @@ func (si *SitemapController) Index(w http.ResponseWriter, r *http.Request) {
 	if err = json.Unmarshal(body, &posts); err != nil {
 		si.Logger.Error(err.Error())
 		si.Logger.Error(string(body))
-		si.Response.Error(w, http.StatusInternalServerError)
+		si.Presenter.Error(w, http.StatusInternalServerError)
 		return
 	}
 
-	_, body, err = si.Client.GetCategories(r, defaultPage, defaultLimit)
+	// NOTE: Since api does not support getting all items, so taking a rough method.
+	resp, err = si.Client.GetCategories(1, 99999)
 	if err != nil {
 		si.Logger.Error(err.Error())
-		si.Response.Error(w, http.StatusInternalServerError)
+		si.Presenter.Error(w, http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		si.Logger.Error(err.Error())
+		si.Presenter.Error(w, http.StatusInternalServerError)
 		return
 	}
 
@@ -59,14 +74,23 @@ func (si *SitemapController) Index(w http.ResponseWriter, r *http.Request) {
 	if err = json.Unmarshal(body, &categories); err != nil {
 		si.Logger.Error(err.Error())
 		si.Logger.Error(string(body))
-		si.Response.Error(w, http.StatusInternalServerError)
+		si.Presenter.Error(w, http.StatusInternalServerError)
 		return
 	}
 
-	_, body, err = si.Client.GetTags(r, defaultPage, defaultLimit)
+	// NOTE: Since api does not support getting all items, so taking a rough method.
+	resp, err = si.Client.GetTags(1, 99999)
 	if err != nil {
 		si.Logger.Error(err.Error())
-		si.Response.Error(w, http.StatusInternalServerError)
+		si.Presenter.Error(w, http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		si.Logger.Error(err.Error())
+		si.Presenter.Error(w, http.StatusInternalServerError)
 		return
 	}
 
@@ -74,36 +98,40 @@ func (si *SitemapController) Index(w http.ResponseWriter, r *http.Request) {
 	if err = json.Unmarshal(body, &tags); err != nil {
 		si.Logger.Error(err.Error())
 		si.Logger.Error(string(body))
-		si.Response.Error(w, http.StatusInternalServerError)
+		si.Presenter.Error(w, http.StatusInternalServerError)
 		return
 	}
 
 	var urlset model.URLSet
 
 	for _, s := range [...]string{"/", "/posts", "/categories", "/tags", "/sitemap", "/feed"} {
+		si.Client.URL.Path = s
 		url := model.URL{
-			Loc: os.Getenv("SITE_URL") + s,
+			Loc: si.Client.URL.String(),
 		}
 		urlset.URLs = append(urlset.URLs, url)
 	}
 
 	for _, p := range posts {
+		si.Client.URL.Path = "/posts/" + p.Title
 		url := model.URL{
-			Loc: os.Getenv("SITE_URL") + "/posts/" + p.Title,
+			Loc: si.Client.URL.String(),
 		}
 		urlset.URLs = append(urlset.URLs, url)
 	}
 
 	for _, c := range categories {
+		si.Client.URL.Path = "/posts/categories/" + c.Name
 		url := model.URL{
-			Loc: os.Getenv("SITE_URL") + "/posts/categories/" + c.Name,
+			Loc: si.Client.URL.String(),
 		}
 		urlset.URLs = append(urlset.URLs, url)
 	}
 
 	for _, t := range tags {
+		si.Client.URL.Path = "/posts/tags/" + t.Name
 		url := model.URL{
-			Loc: os.Getenv("SITE_URL") + "/posts/tags/" + t.Name,
+			Loc: si.Client.URL.String(),
 		}
 		urlset.URLs = append(urlset.URLs, url)
 	}

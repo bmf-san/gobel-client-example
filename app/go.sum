@@ -1,5 +1,6 @@
 github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/bmf-san/gobel-api/app v0.0.0-20200407144824-d76103b67196/go.mod h1:Qni9iFsAzo8Y3eWJ8Sb3ypH1SIHNg2GVNWuAa/zVN5w=
+github.com/bmf-san/gobel-client-example v0.0.0-20210105124916-8813e66923e4 h1:oNaUuoGlVhg60FNx45Ag0nFh7DQwiVvGXSIZwwCsPLI=
 github.com/bmf-san/goblin v0.0.0-20200105095952-e37989167161/go.mod h1:qXZgUT0V3TiFV043L16JFLw4gV2s0uaSFUEnW3TRMmQ=
 github.com/bmf-san/goblin v0.0.0-20200812051731-4ca3dc28faa3 h1:eidWLsul6JXYNrV6zsVLeahcOnuS0khDy48wzfj4bqs=
 github.com/bmf-san/goblin v0.0.0-20200812051731-4ca3dc28faa3/go.mod h1:/rc0S2icYigzs9pjMRyCfYj9xHEREpVKqll+6LLz15w=

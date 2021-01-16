@@ -1,57 +1,75 @@
 package api
 
 import (
-	"io/ioutil"
+	"bytes"
+	"errors"
 	"net/http"
+	"net/url"
+	"os"
 	"strconv"
 	"time"
 )
 
+const (
+	// defaultPage is a default page.
+	defaultPage = 1
+	// defaultPage is a default limit.
+	defaultLimit = 10
+)
+
 // Client represents the singular of api client.
 type Client struct {
-	Client *http.Client
+	httpClient *http.Client
+	URL        *url.URL
 }
 
 // NewClient creates a Client.
 func NewClient() *Client {
 	return &Client{
-		Client: &http.Client{
+		httpClient: &http.Client{
 			Timeout: time.Duration(100 * time.Second),
+		},
+		URL: &url.URL{
+			Scheme: os.Getenv("HTTP_API_SCHEME"),
+			Host:   os.Getenv("HTTP_API_HOST"),
 		},
 	}
 }
 
-// HandleResponseBody handles an api client for getting response and body.
-func (a *Client) HandleResponseBody(req *http.Request) (*http.Response, []byte, error) {
-	resp, err := a.Client.Do(req)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return resp, body, nil
-}
-
-// HandleResponse handles an api client for getting response.
-func (a *Client) HandleResponse(req *http.Request) (*http.Response, error) {
-	resp, err := a.Client.Do(req)
+// Do sends an HTTP request and returns an HTTP response.
+func (c *Client) Do(method string, path string, query map[string]string, data []byte) (*http.Response, error) {
+	c.URL.Path = path
+	req, err := http.NewRequest(method, c.URL.String(), bytes.NewBuffer(data))
 	if err != nil {
 		return nil, err
 	}
 
-	defer resp.Body.Close()
+	// query
+	q := req.URL.Query()
+	for k, v := range query {
+		q.Add(k, v)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	// header
+	for key, value := range map[string]string{"key": "value"} {
+		req.Header.Add(key, value)
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New(http.StatusText(resp.StatusCode))
+	}
 
 	return resp, nil
 }
 
 // GetPageAndLimit gets page and limit.
-func (a *Client) GetPageAndLimit(r *http.Request, defaultPage int, defaultLimit int) (int, int, error) {
+func (c *Client) GetPageAndLimit(r *http.Request) (int, int, error) {
 	var err error
 
 	paramPage := r.URL.Query().Get("page")
