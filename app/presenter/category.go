@@ -1,4 +1,4 @@
-package response
+package presenter
 
 import (
 	"html/template"
@@ -14,7 +14,7 @@ type CategoryIndex struct {
 }
 
 // ExecuteCategoryIndex responses a index view.
-func (r *Response) ExecuteCategoryIndex(w http.ResponseWriter, c *CategoryIndex) error {
+func (p *Presenter) ExecuteCategoryIndex(w http.ResponseWriter, c *CategoryIndex) error {
 	tpl := template.Must(template.ParseFiles("view/layout/base.tpl", "view/category/index.tpl", "view/partial/pagination.tpl", "view/partial/pagination.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", c); err != nil {
 		return err

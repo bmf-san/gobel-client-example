@@ -21,8 +21,9 @@
     <p><span>UpdatedAt</span>:{{ .Post.UpdatedAt }}</p>
 </div>
 
-<form action="/posts/{{ .Title }}/comments" method="post">
+<!-- TODO: implement later -->
+<!-- <form action="/posts/{{ .Title }}/comments" method="post">
     <textarea name="" id="" cols="30" rows="10"></textarea>
     <button type="submit">Submit</button>
-</form>
+</form> -->
 {{ end }}

@@ -1,4 +1,4 @@
-package response
+package presenter
 
 import (
 	"html/template"
@@ -31,7 +31,7 @@ type PostShow struct {
 }
 
 // ExecutePostIndex responses a index view.
-func (r *Response) ExecutePostIndex(w http.ResponseWriter, p *PostIndex) error {
+func (pt *Presenter) ExecutePostIndex(w http.ResponseWriter, p *PostIndex) error {
 	tpl := template.Must(template.ParseFiles("view/layout/base.tpl", "view/post/index.tpl", "view/partial/pagination.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", p); err != nil {
 		return err
@@ -40,7 +40,7 @@ func (r *Response) ExecutePostIndex(w http.ResponseWriter, p *PostIndex) error {
 }
 
 // ExecutePostIndexByCategory responses a index view by category.
-func (r *Response) ExecutePostIndexByCategory(w http.ResponseWriter, p *PostIndexByCategory) error {
+func (pt *Presenter) ExecutePostIndexByCategory(w http.ResponseWriter, p *PostIndexByCategory) error {
 	tpl := template.Must(template.ParseFiles("view/layout/base.tpl", "view/post/category.tpl", "view/partial/pagination.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", p); err != nil {
 		return err
@@ -49,7 +49,7 @@ func (r *Response) ExecutePostIndexByCategory(w http.ResponseWriter, p *PostInde
 }
 
 // ExecutePostIndexByTag responses a index view by tag.
-func (r *Response) ExecutePostIndexByTag(w http.ResponseWriter, p *PostIndexByTag) error {
+func (pt *Presenter) ExecutePostIndexByTag(w http.ResponseWriter, p *PostIndexByTag) error {
 	tpl := template.Must(template.ParseFiles("view/layout/base.tpl", "view/post/tag.tpl", "view/partial/pagination.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", p); err != nil {
 		return err
@@ -58,7 +58,7 @@ func (r *Response) ExecutePostIndexByTag(w http.ResponseWriter, p *PostIndexByTa
 }
 
 // ExecutePostShow responses a show view by tag.
-func (r *Response) ExecutePostShow(w http.ResponseWriter, p *PostShow) error {
+func (pt *Presenter) ExecutePostShow(w http.ResponseWriter, p *PostShow) error {
 	tpl := template.Must(template.ParseFiles("view/layout/base.tpl", "view/post/show.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", p); err != nil {
 		return err

@@ -32,7 +32,7 @@ package middleware
 // }
 
 // // NewAsset creates a assets.
-// func NewAsset(redisHandler *session.RedisHandler, logger *logger.Logger, cookie *cookie.Cookie, response *response.Response) Asset {
+// func NewAsset(redisHandler *session.RedisHandler, logger *logger.Logger, cookie *cookie.Cookie, presenter *presenter.Presenter) Asset {
 // 	return Asset{
 // 		redisHandler: redisHandler,
 // 		logger:       logger,
@@ -65,7 +65,7 @@ package middleware
 // 			token, err := a.redisHandler.SetCSRFToken()
 // 			if err != nil {
 // 				a.logger.Error(err.Error())
-// 				a.response.Error(w, http.StatusInternalServerError)
+// 				a.Presenter.Error(w, http.StatusInternalServerError)
 // 				return
 // 			}
 // 			ctx := context.WithValue(r.Context(), ctxCSRFToken, token)
@@ -77,13 +77,13 @@ package middleware
 // 			token := r.Form.Get("csrf_token")
 // 			if token == "" {
 // 				a.logger.Error("CSRF token is invalid")
-// 				a.response.Error(w, http.StatusInternalServerError)
+// 				a.Presenter.Error(w, http.StatusInternalServerError)
 // 				return
 // 			}
 
 // 			if err := a.redisHandler.HasCSRFToken(token); err != nil {
 // 				a.logger.Error(err.Error())
-// 				a.response.Error(w, http.StatusInternalServerError)
+// 				a.Presenter.Error(w, http.StatusInternalServerError)
 // 				return
 // 			}
 

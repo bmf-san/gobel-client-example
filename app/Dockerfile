@@ -1,8 +1,8 @@
 FROM golang:1.13.0-alpine
 
 ENV SERVER_PORT=8081
-ENV API_URL=http://gobel-api:8080
-ENV SITE_URL=http://localhost:8081
+ENV HTTP_API_SCHEME=http
+ENV HTTP_API_HOST=gobel-api:8080
 ENV TIME_ZONE=Asia/Tokyo
 
 RUN apk update && \
