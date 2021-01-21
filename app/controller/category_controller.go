@@ -28,51 +28,53 @@ func NewCategoryController(logger *logger.Logger, client *api.Client, presenter 
 }
 
 // Index displays a listing of the resource.
-func (cc *CategoryController) Index(w http.ResponseWriter, r *http.Request) {
-	page, limit, err := cc.Client.GetPageAndLimit(r)
-	if err != nil {
-		cc.Logger.Error(err.Error())
-		cc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
+func (cc *CategoryController) Index() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		page, _, err := cc.Client.GetPageAndLimit(r)
+		if err != nil {
+			cc.Logger.Error(err.Error())
+			cc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
 
-	resp, err := cc.Client.GetCategories(page, limit)
-	if err != nil {
-		cc.Logger.Error(err.Error())
-		cc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
-	defer resp.Body.Close()
+		resp, err := cc.Client.GetCategories(page, 100)
+		if err != nil {
+			cc.Logger.Error(err.Error())
+			cc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+		defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		cc.Logger.Error(err.Error())
-		cc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			cc.Logger.Error(err.Error())
+			cc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
 
-	var categories model.Categories
+		var categories model.Categories
 
-	if err := json.Unmarshal(body, &categories); err != nil {
-		cc.Logger.Error(err.Error())
-		cc.Logger.Error(string(body))
-		cc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
+		if err := json.Unmarshal(body, &categories); err != nil {
+			cc.Logger.Error(err.Error())
+			cc.Logger.Error(string(body))
+			cc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
 
-	var pagination model.Pagination
-	if err := pagination.Convert(resp.Header); err != nil {
-		cc.Logger.Error(err.Error())
-		cc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
+		var pagination model.Pagination
+		if err := pagination.Convert(resp.Header); err != nil {
+			cc.Logger.Error(err.Error())
+			cc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
 
-	if err = cc.Presenter.ExecuteCategoryIndex(w, &presenter.CategoryIndex{
-		Categories: &categories,
-		Pagination: &pagination,
-	}); err != nil {
-		cc.Logger.Error(err.Error())
-		cc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
+		if err = cc.Presenter.ExecuteCategoryIndex(w, &presenter.CategoryIndex{
+			Categories: &categories,
+			Pagination: &pagination,
+		}); err != nil {
+			cc.Logger.Error(err.Error())
+			cc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+	})
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/bmf-san/gobel-client-example/app/controller"
 	"github.com/bmf-san/gobel-client-example/app/logger"
 	"github.com/bmf-san/gobel-client-example/app/presenter"
-	"github.com/bmf-san/gobel-client-example/app/router"
+	"github.com/bmf-san/goblin"
 )
 
 const timeout time.Duration = 10 * time.Second
@@ -36,19 +36,22 @@ func main() {
 	sc := controller.NewSitemapController(logger, client, presenter)
 	fc := controller.NewFeedController(logger, client, presenter)
 
-	r := router.NewRouter()
-	r.SetHome(hc)
-	r.SetPosts(pc)
-	r.SetCategories(cc)
-	r.SetTags(tc)
+	r := goblin.NewRouter()
+	r.Methods(http.MethodGet).Handler(`/`, hc.Index())
+	r.Methods(http.MethodGet).Handler(`/posts`, pc.Index())
+	r.Methods(http.MethodGet).Handler(`/posts/:title`, pc.Show())
+	r.Methods(http.MethodGet).Handler(`/posts/categories/:name`, pc.IndexByCategory())
+	r.Methods(http.MethodGet).Handler(`/posts/tags/:name`, pc.IndexByTag())
 	// TODO: implement later.
-	// r.SetComments(cmc)
-	r.SetSitemap(sc)
-	r.SetFeed(fc)
+	// r.Methods("/posts/:title/comments").Handler(`/posts/:title/comments`, cc.Store())
+	r.Methods(http.MethodGet).Handler(`/categories`, cc.Index())
+	r.Methods(http.MethodGet).Handler(`/tags`, tc.Index())
+	r.Methods(http.MethodGet).Handler(`/sitemap`, sc.Index())
+	r.Methods(http.MethodGet).Handler(`/feed`, fc.Index())
 
 	s := http.Server{
 		Addr:    ":" + os.Getenv("SERVER_PORT"),
-		Handler: r.Mux,
+		Handler: r,
 	}
 
 	go func() {

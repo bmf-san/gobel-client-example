@@ -25,10 +25,12 @@ func NewHomeController(logger *logger.Logger, client *api.Client, presenter *pre
 }
 
 // Index displays a listing of the resource.
-func (hc *HomeController) Index(w http.ResponseWriter, r *http.Request) {
-	if err := hc.Presenter.ExecuteHomeIndex(w); err != nil {
-		hc.Logger.Error(err.Error())
-		hc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
+func (hc *HomeController) Index() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if err := hc.Presenter.ExecuteHomeIndex(w); err != nil {
+			hc.Logger.Error(err.Error())
+			hc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+	})
 }
