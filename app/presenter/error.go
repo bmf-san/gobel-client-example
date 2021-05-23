@@ -5,20 +5,20 @@ import (
 	"net/http"
 )
 
-// ErrorData is a data for view.
+// ErrorData is a data for template.
 type ErrorData struct {
 	Code    int
 	Message string
 }
 
-// Error responses a error view.
+// Error responses a error template.
 func (p *Presenter) Error(w http.ResponseWriter, code int) {
 	e := &ErrorData{
 		Code:    code,
 		Message: handleErrorMessage(code),
 	}
 
-	tpl := template.Must(template.ParseFiles("view/layout/base.tpl", "view/error/index.tpl"))
+	tpl := template.Must(template.ParseFS(tpls, "template/layout/base.tpl", "template/error/index.tpl"))
 
 	w.WriteHeader(e.Code)
 
@@ -31,7 +31,7 @@ func (p *Presenter) Error(w http.ResponseWriter, code int) {
 func handleErrorMessage(code int) string {
 	switch code {
 	case http.StatusInternalServerError:
-		return "An unexepected condition has occured"
+		return "An unexpected condition has occured"
 	}
 	return ""
 }

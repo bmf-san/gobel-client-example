@@ -28,46 +28,48 @@ func NewTagController(logger *logger.Logger, client *api.Client, presenter *pres
 }
 
 // Index displays a listing of the resource.
-func (tc *TagController) Index(w http.ResponseWriter, r *http.Request) {
-	page, limit, err := tc.Client.GetPageAndLimit(r)
+func (tc *TagController) Index() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		page, _, err := tc.Client.GetPageAndLimit(r)
 
-	resp, err := tc.Client.GetTags(page, limit)
-	if err != nil {
-		tc.Logger.Error(err.Error())
-		tc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
-	defer resp.Body.Close()
+		resp, err := tc.Client.GetTags(page, 100)
+		if err != nil {
+			tc.Logger.Error(err.Error())
+			tc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+		defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		tc.Logger.Error(err.Error())
-		tc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			tc.Logger.Error(err.Error())
+			tc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
 
-	var tags model.Tags
+		var tags model.Tags
 
-	if err := json.Unmarshal(body, &tags); err != nil {
-		tc.Logger.Error(err.Error())
-		tc.Logger.Error(string(body))
-		tc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
+		if err := json.Unmarshal(body, &tags); err != nil {
+			tc.Logger.Error(err.Error())
+			tc.Logger.Error(string(body))
+			tc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
 
-	var pagination model.Pagination
-	if err := pagination.Convert(resp.Header); err != nil {
-		tc.Logger.Error(err.Error())
-		tc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
+		var pagination model.Pagination
+		if err := pagination.Convert(resp.Header); err != nil {
+			tc.Logger.Error(err.Error())
+			tc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
 
-	if err = tc.Presenter.ExecuteTagIndex(w, &presenter.TagIndex{
-		Tags:       &tags,
-		Pagination: &pagination,
-	}); err != nil {
-		tc.Logger.Error(err.Error())
-		tc.Presenter.Error(w, http.StatusInternalServerError)
-		return
-	}
+		if err = tc.Presenter.ExecuteTagIndex(w, &presenter.TagIndex{
+			Tags:       &tags,
+			Pagination: &pagination,
+		}); err != nil {
+			tc.Logger.Error(err.Error())
+			tc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+	})
 }
