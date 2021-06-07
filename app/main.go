@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,6 +17,9 @@ import (
 	"github.com/bmf-san/goblin"
 )
 
+//go:embed templates
+var templates embed.FS
+
 const timeout time.Duration = 10 * time.Second
 
 func main() {
@@ -25,7 +29,7 @@ func main() {
 
 	logger := logger.NewLogger(threshold, location)
 	client := api.NewClient()
-	presenter := presenter.NewPresenter()
+	presenter := presenter.NewPresenter(templates)
 
 	hc := controller.NewHomeController(logger, client, presenter)
 	pc := controller.NewPostController(logger, client, presenter)
@@ -37,6 +41,7 @@ func main() {
 	fc := controller.NewFeedController(logger, client, presenter)
 
 	r := goblin.NewRouter()
+
 	r.Methods(http.MethodGet).Handler(`/`, hc.Index())
 	r.Methods(http.MethodGet).Handler(`/posts`, pc.Index())
 	r.Methods(http.MethodGet).Handler(`/posts/:title`, pc.Show())

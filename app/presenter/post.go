@@ -34,7 +34,7 @@ type PostShow struct {
 
 // ExecutePostIndex responses a index template.
 func (pt *Presenter) ExecutePostIndex(w http.ResponseWriter, p *PostIndex) error {
-	tpl := template.Must(template.ParseFS(tpls, "template/layout/base.tpl", "template/post/index.tpl", "template/partial/pagination.tpl"))
+	tpl := template.Must(template.ParseFS(pt.templates, "templates/layout/base.tpl", "templates/post/index.tpl", "templates/partial/pagination.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", p); err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func (pt *Presenter) ExecutePostIndex(w http.ResponseWriter, p *PostIndex) error
 
 // ExecutePostIndexByCategory responses a index template by category.
 func (pt *Presenter) ExecutePostIndexByCategory(w http.ResponseWriter, p *PostIndexByCategory) error {
-	tpl := template.Must(template.ParseFS(tpls, "template/layout/base.tpl", "template/post/category.tpl", "template/partial/pagination.tpl"))
+	tpl := template.Must(template.ParseFS(pt.templates, "templates/layout/base.tpl", "templates/post/category.tpl", "templates/partial/pagination.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", p); err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (pt *Presenter) ExecutePostIndexByCategory(w http.ResponseWriter, p *PostIn
 
 // ExecutePostIndexByTag responses a index template by tag.
 func (pt *Presenter) ExecutePostIndexByTag(w http.ResponseWriter, p *PostIndexByTag) error {
-	tpl := template.Must(template.ParseFS(tpls, "template/layout/base.tpl", "template/post/tag.tpl", "template/partial/pagination.tpl"))
+	tpl := template.Must(template.ParseFS(pt.templates, "templates/layout/base.tpl", "templates/post/tag.tpl", "templates/partial/pagination.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", p); err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func (pt *Presenter) ExecutePostShow(w http.ResponseWriter, p *PostShow) error {
 	fm := template.FuncMap{
 		"unescape": pt.unescape,
 	}
-	tpl := template.Must(template.New("base").Funcs(fm).ParseFS(tpls, "template/layout/base.tpl", "template/post/show.tpl"))
+	tpl := template.Must(template.New("base").Funcs(fm).ParseFS(pt.templates, "templates/layout/base.tpl", "templates/post/show.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", p); err != nil {
 		return err
 	}

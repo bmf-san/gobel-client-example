@@ -6,11 +6,10 @@ services:
     build:
         context: "./app"
         dockerfile: "Dockerfile"
-    command: realize start --run
     ports:
       - "8081:8081"
     volumes:
-      - ./app:/go/src/github.com/bmf-san/gobel-client-example/app
+      - ./app:/go/gobel-client-example/app
     networks:
       - gobel_link
   nginx:

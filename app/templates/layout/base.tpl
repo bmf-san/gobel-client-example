@@ -15,7 +15,7 @@
     <meta property="og:locale" content="ja_JP" />
     <meta name="twitter:card" content="" />
     <meta name="twitter:site" content="" />
-    <link rel="stylesheet" href="https://unpkg.com/sea.css/dist/sea.min.css">
+	<link rel="stylesheet" href="https://unpkg.com/sea.css/dist/sea.min.css">
 </head>
 <body>
     <header>

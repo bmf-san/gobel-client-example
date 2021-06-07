@@ -31,7 +31,7 @@ package middleware
 // 	response     *response.Response
 // }
 
-// // NewAsset creates a assets.
+// // NewAsset creates a templates.
 // func NewAsset(redisHandler *session.RedisHandler, logger *logger.Logger, cookie *cookie.Cookie, presenter *presenter.Presenter) Asset {
 // 	return Asset{
 // 		redisHandler: redisHandler,
