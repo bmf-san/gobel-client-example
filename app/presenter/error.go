@@ -18,7 +18,7 @@ func (p *Presenter) Error(w http.ResponseWriter, code int) {
 		Message: handleErrorMessage(code),
 	}
 
-	tpl := template.Must(template.ParseFS(tpls, "template/layout/base.tpl", "template/error/index.tpl"))
+	tpl := template.Must(template.ParseFS(p.templates, "templates/layout/base.tpl", "templates/error/index.tpl"))
 
 	w.WriteHeader(e.Code)
 

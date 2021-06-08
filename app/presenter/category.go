@@ -15,7 +15,7 @@ type CategoryIndex struct {
 
 // ExecuteCategoryIndex responses a index template.
 func (p *Presenter) ExecuteCategoryIndex(w http.ResponseWriter, c *CategoryIndex) error {
-	tpl := template.Must(template.ParseFS(tpls, "template/layout/base.tpl", "template/category/index.tpl", "template/partial/pagination.tpl", "template/partial/pagination.tpl"))
+	tpl := template.Must(template.ParseFS(p.templates, "templates/layout/base.tpl", "templates/category/index.tpl", "templates/partial/pagination.tpl", "templates/partial/pagination.tpl"))
 	if err := tpl.ExecuteTemplate(w, "base", c); err != nil {
 		return err
 	}

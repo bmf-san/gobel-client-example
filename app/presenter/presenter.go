@@ -6,15 +6,16 @@ import (
 )
 
 // Presenter represents the singular of presenter.
-type Presenter struct{}
-
-// NewPresenter creates a Presenter.
-func NewPresenter() *Presenter {
-	return &Presenter{}
+type Presenter struct {
+	templates embed.FS
 }
 
-//go:embed template
-var tpls embed.FS
+// NewPresenter creates a Presenter.
+func NewPresenter(templates embed.FS) *Presenter {
+	return &Presenter{
+		templates: templates,
+	}
+}
 
 func (p *Presenter) unescape(text string) template.HTML {
 	return template.HTML(text)

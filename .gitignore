@@ -1,9 +1,8 @@
-# app
-/app/app
-/.env
 .DS_STORE
-/app/log/*
-!/app/log/.gitkeep
+
+# app
+/app/tmp
+.env
 
 # editor
 .vscode/
