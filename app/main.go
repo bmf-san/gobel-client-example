@@ -17,7 +17,7 @@ import (
 	"github.com/bmf-san/goblin"
 )
 
-//go:embed templates
+//go:embed templates/*
 var templates embed.FS
 
 const timeout time.Duration = 10 * time.Second
