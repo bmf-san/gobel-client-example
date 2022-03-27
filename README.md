@@ -45,7 +45,7 @@ or
 make docker-compose-up-d
 ```
 
-Then go to `gobel-client.example.local:81`
+Then go to `gobel-client-example.local:81`
 
 # Contributing
 We welcome your issue or pull request from everyone.
