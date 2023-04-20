@@ -14,7 +14,7 @@ ENV GOARCH=amd64
 
 RUN go build -o app
 
-FROM --platform=linux/amd64 alpine
+FROM --platform=$BUILDPLATFORM  alpine
 
 COPY --from=builder /go/gobel-client-example/app ./
 

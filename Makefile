@@ -5,7 +5,7 @@ help:
 
 .DEFAULT_GOAL := help
 
-.PHONY: docker-compose-build 
+.PHONY: docker-compose-build
 docker-compose-build: ## Build containers by docker-compose.
 ifeq ($(env), ci)
 	docker-compose -f docker-compose.ci.yml build
@@ -37,10 +37,14 @@ else
 	docker-compose -f docker-compose-local.yml pull
 endif
 
+.PHONY: setup-buildx
+setup-buildx: ## Set up buildx builder.
+	docker buildx create --name buildx-builder
+	docker buildx use buildx-builder
+
 .PHONY: build-and-push
 build-and-push: ## Build and push image to dockerhub.
-	docker build -f app/Dockerfile -t bmfsan/gobel-client-example ./app/
-	docker push bmfsan/gobel-client-example
+	docker buildx build --no-cache --push --platform linux/amd64,linux/arm64 --file app/Dockerfile --tag bmfsan/gobel-client-example app/
 
 .PHONY: lint
 lint: ## Run golint.
