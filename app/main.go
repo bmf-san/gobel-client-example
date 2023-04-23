@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime/debug"
 	"strconv"
 	"syscall"
 	"time"
@@ -28,6 +29,14 @@ func main() {
 	location := time.FixedZone(os.Getenv("TIME_ZONE"), offset)
 
 	logger := logger.NewLogger(threshold, location)
+
+	defer func() {
+		if x := recover(); x != nil {
+			logger.Error(string(debug.Stack()))
+		}
+		os.Exit(1)
+	}()
+
 	client := api.NewClient()
 	presenter := presenter.NewPresenter(templates)
 
@@ -42,8 +51,21 @@ func main() {
 
 	r := goblin.NewRouter()
 
+	r.Methods(http.MethodGet).Handler(`/favicon.ico`, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.FileServer(http.Dir("static")).ServeHTTP(w, r)
+	}))
+
+	r.Methods(http.MethodGet).Handler(`/ads.txt`, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.FileServer(http.Dir("static")).ServeHTTP(w, r)
+	}))
+
+	r.Methods(http.MethodGet).Handler(`/style.css`, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.FileServer(http.Dir("static")).ServeHTTP(w, r)
+	}))
+
 	r.Methods(http.MethodGet).Handler(`/`, hc.Index())
 	r.Methods(http.MethodGet).Handler(`/posts`, pc.Index())
+	r.Methods(http.MethodGet).Handler(`/posts/search`, pc.IndexByKeyword())
 	r.Methods(http.MethodGet).Handler(`/posts/:title`, pc.Show())
 	r.Methods(http.MethodGet).Handler(`/posts/categories/:name`, pc.IndexByCategory())
 	r.Methods(http.MethodGet).Handler(`/posts/tags/:name`, pc.IndexByTag())

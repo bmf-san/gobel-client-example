@@ -2,7 +2,7 @@
 [![GitHub license](https://img.shields.io/github/license/bmf-san/gobel-client-example)](https://github.com/bmf-san/gobel-client-example/blob/master/LICENSE)
 [![CircleCI](https://circleci.com/gh/bmf-san/gobel-client-example.svg?style=svg)](https://circleci.com/gh/bmf-san/gobel-client-example)
 
-Gobel is a headless cms built with golang. 
+Gobel is a headless cms built with golang.
 
 This is an example for client application of gobel.
 
@@ -60,4 +60,4 @@ bmf - Software engineer.
 
 - [github - bmf-san/bmf-san](https://github.com/bmf-san/bmf-san)
 - [twitter - @bmf-san](https://twitter.com/bmf_san)
-- [blog - bmf-tech](http://bmf-tech.com/)
+- [blog - gobel-client-example](http://gobel-client-example.com/)

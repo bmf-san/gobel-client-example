@@ -1,4 +1,4 @@
-FROM golang:1.17.1-alpine as builder
+FROM golang:1.20.0-alpine as builder
 
 WORKDIR /go/gobel-client-example/app
 
@@ -13,6 +13,8 @@ RUN apk update && \
     apk add --no-cache libc-dev gcc git openssh openssl bash
 
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o app
+
+RUN go build -o app
 
 FROM --platform=$TARGETPLATFORM alpine
 

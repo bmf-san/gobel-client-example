@@ -9,6 +9,8 @@ import (
 const (
 	// getPostsPath is a path for getting posts.
 	getPostsPath = "/posts"
+	// getPostsBySearchPath is a path for getting posts by search.
+	getPostsBySearchPath = "/posts/search"
 	// getPostsByCategoryPath is a path for getting posts by category.
 	getPostsByCategoryPath = "/posts/categories/%s"
 	// getPostsByTagPath is a path for getting posts by tag.
@@ -20,6 +22,17 @@ const (
 // GetPosts requests posts
 func (c *Client) GetPosts(page int, limit int) (*http.Response, error) {
 	resp, err := c.Do(http.MethodGet, getPostsPath, map[string]string{"page": strconv.Itoa(page), "limit": strconv.Itoa(limit)}, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+// GetPostsByKeyword requests posts by keyword.
+func (c *Client) GetPostsByKeyword(keyword string, page int, limit int) (*http.Response, error) {
+	resp, err := c.Do(http.MethodGet, getPostsBySearchPath, map[string]string{"keyword": keyword, "page": strconv.Itoa(page), "limit": strconv.Itoa(limit)}, nil)
+	fmt.Printf("%#v\n", resp.Request.URL)
 	if err != nil {
 		return nil, err
 	}

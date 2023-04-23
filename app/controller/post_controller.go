@@ -2,7 +2,9 @@ package controller
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
+	"html/template"
+	"io"
 	"net/http"
 
 	"github.com/bmf-san/gobel-client-example/app/api"
@@ -46,7 +48,7 @@ func (pc *PostController) Index() http.Handler {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			pc.Logger.Error(err.Error())
 			pc.Presenter.Error(w, http.StatusInternalServerError)
@@ -69,9 +71,68 @@ func (pc *PostController) Index() http.Handler {
 			return
 		}
 
-		if err = pc.Presenter.ExecutePostIndex(w, &presenter.PostIndex{
-			Posts:      &posts,
-			Pagination: &pagination,
+		if err = pc.Presenter.ExecutePostIndex(w, r, &presenter.PostIndex{
+			Posts: &posts,
+			Pagination: &presenter.Pagination{
+				Pager:       &pagination,
+				QueryParams: "",
+			},
+		}); err != nil {
+			pc.Logger.Error(err.Error())
+			pc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+	})
+}
+
+// IndexByKeyword displays a listing of the resource.
+func (pc *PostController) IndexByKeyword() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		page, limit, err := pc.Client.GetPageAndLimit(r)
+		if err != nil {
+			pc.Logger.Error(err.Error())
+			pc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+
+		keyword := r.URL.Query().Get("keyword")
+		resp, err := pc.Client.GetPostsByKeyword(keyword, page, limit)
+		if err != nil {
+			pc.Logger.Error(err.Error())
+			pc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+		defer resp.Body.Close()
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			pc.Logger.Error(err.Error())
+			pc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+
+		var posts model.Posts
+
+		if err := json.Unmarshal(body, &posts); err != nil {
+			pc.Logger.Error(err.Error())
+			pc.Logger.Error(string(body))
+			pc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+
+		var pagination model.Pagination
+		if err := pagination.Convert(resp.Header); err != nil {
+			pc.Logger.Error(err.Error())
+			pc.Presenter.Error(w, http.StatusInternalServerError)
+			return
+		}
+
+		if err = pc.Presenter.ExecutePostIndexByKeyword(w, r, &presenter.PostIndexBySearch{
+			Posts: &posts,
+			Pagination: &presenter.Pagination{
+				Pager:       &pagination,
+				QueryParams: template.URL(fmt.Sprintf("keyword=%s", keyword)),
+			},
 		}); err != nil {
 			pc.Logger.Error(err.Error())
 			pc.Presenter.Error(w, http.StatusInternalServerError)
@@ -99,7 +160,7 @@ func (pc *PostController) IndexByCategory() http.Handler {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			pc.Logger.Error(err.Error())
 			pc.Presenter.Error(w, http.StatusInternalServerError)
@@ -121,10 +182,13 @@ func (pc *PostController) IndexByCategory() http.Handler {
 			return
 		}
 
-		if err = pc.Presenter.ExecutePostIndexByCategory(w, &presenter.PostIndexByCategory{
+		if err = pc.Presenter.ExecutePostIndexByCategory(w, r, &presenter.PostIndexByCategory{
 			CategoryName: name,
 			Posts:        &posts,
-			Pagination:   &pagination,
+			Pagination: &presenter.Pagination{
+				Pager:       &pagination,
+				QueryParams: "",
+			},
 		}); err != nil {
 			pc.Logger.Error(err.Error())
 			pc.Presenter.Error(w, http.StatusInternalServerError)
@@ -152,7 +216,7 @@ func (pc *PostController) IndexByTag() http.Handler {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			pc.Logger.Error(err.Error())
 			pc.Presenter.Error(w, http.StatusInternalServerError)
@@ -175,10 +239,13 @@ func (pc *PostController) IndexByTag() http.Handler {
 			return
 		}
 
-		if err = pc.Presenter.ExecutePostIndexByTag(w, &presenter.PostIndexByTag{
-			TagName:    name,
-			Posts:      &posts,
-			Pagination: &pagination,
+		if err = pc.Presenter.ExecutePostIndexByTag(w, r, &presenter.PostIndexByTag{
+			TagName: name,
+			Posts:   &posts,
+			Pagination: &presenter.Pagination{
+				Pager:       &pagination,
+				QueryParams: "",
+			},
 		}); err != nil {
 			pc.Logger.Error(err.Error())
 			pc.Presenter.Error(w, http.StatusInternalServerError)
@@ -200,7 +267,7 @@ func (pc *PostController) Show() http.Handler {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			pc.Logger.Error(err.Error())
 			pc.Presenter.Error(w, http.StatusInternalServerError)
@@ -216,7 +283,7 @@ func (pc *PostController) Show() http.Handler {
 			return
 		}
 
-		if err = pc.Presenter.ExecutePostShow(w, &presenter.PostShow{
+		if err = pc.Presenter.ExecutePostShow(w, r, &presenter.PostShow{
 			Post: &post,
 		}); err != nil {
 			pc.Logger.Error(err.Error())

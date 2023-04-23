@@ -1,92 +1,93 @@
-references:
-    restore_git_cache: &restore_git_cache
-        restore_cache:
-            keys:
-                - v1-git-cache-{{ .Branch }}-{{ .Revision }}
-                - v1-git-cache-{{ .Branch }}-
-                - v1-git-cache-
-    save_git_cache: &save_git_cache
-        save_cache:
-            key: v1-git-cache-{{ .Branch }}-{{ .Revision }}
-            paths:
-                - ".git"
-    restore_docker_compose_cache: &restore_docker_compose_cache
-        restore_cache:
-            key: v1-docker-{{ .Branch }}-{{ checksum "docker-compose.ci.yml" }}
-            paths: ~/caches/images.tar
-    load_docker_image: &load_docker_image
-        run:
-            name: Load docker image
-            command: |
-                set +o pipefail
-                docker load -i ~/caches/images.tar | true
-    run_docker_compose: &run_docker_compose
-        run:
-            name: Run docker compose
-            command: |
-                set -x
-                make env=ci docker-compose-pull
-                make env=ci docker-compose-build
-                make env=ci docker-compose-up-d
-    save_docker_image: &save_docker_image
-        run:
-            name: Save docker image
-            command: |
-                mkdir -p ~/caches
-                docker save $(docker images -q) -o ~/caches/images.tar
-    save_docker_compose_cache: &save_docker_compose_cache
-        save_cache:
-            key: v1-docker-{{ .Branch }}-{{ checksum "docker-compose.ci.yml" }}
-            paths: ~/caches/images.tar
+version: 2.1
 
-version: 2
+orbs:
+  codecov: codecov/codecov@3.2.2
+
 jobs:
-    build:
-        working_directory: ~/workspace
-        machine: true
-        steps:
-            - *restore_git_cache
-            - checkout
-            - *save_git_cache
-            - *restore_docker_compose_cache
-            - *load_docker_image
-            - *run_docker_compose
-            - *save_docker_image
-            - *save_docker_compose_cache
-            - persist_to_workspace:
-                root: .
-                paths:
-                    - .
-    golint:
-        machine: true
-        steps:
-            - attach_workspace:
-                at: .
-            - *restore_docker_compose_cache
-            - *load_docker_image
-            - *run_docker_compose
-            - run:
-                name: Run golint
-                command: make lint
-    test:
-        machine: true
-        steps:
-            - attach_workspace:
-                at: .
-            - *restore_docker_compose_cache
-            - *load_docker_image
-            - *run_docker_compose
-            - run:
-                name: Run tests
-                command: make test
+  lint:
+    parameters:
+      version:
+        type: string
+      modules:
+        type: boolean
+        default: true
+    docker:
+      - image: "cimg/go:<< parameters.version >>"
+    working_directory: ~/go/src/github.com/bmf-san/gobel-client-example
+    environment:
+      GO111MODULE: "on"
+    steps:
+      - checkout
+      - run:
+          name: "Go version"
+          command: go version
+      - run:
+          name: "Install tools"
+          command: |
+            if [[ << parameters.version >> = 1.18 ]]; then
+              make install-staticcheck
+            fi
+      - run:
+          name: "Run gofmt"
+          command: make gofmt
+      - run:
+          name: "Run vet"
+          command: make vet
+      - run:
+          name: "Run staticcheck"
+          command: >
+            if [[ << parameters.version >> = 1.18 ]]; then
+              make staticcheck
+            fi
+  test:
+    parameters:
+      version:
+        type: string
+      modules:
+        type: boolean
+        default: true
+    docker:
+      - image: "cimg/go:<< parameters.version >>"
+    working_directory: ~/go/src/github.com/bmf-san/gobel-client-example
+    environment:
+      GO111MODULE: "on"
+    steps:
+      - checkout
+      - run:
+          name: "Go version"
+          command: go version
+      - run:
+          name: "Fetch dependencies"
+          command: make mod
+      - run:
+          name: "Install tools"
+          command: >
+            if [[ << parameters.version >> = 1.18 ]]; then
+              make install-staticcheck
+            fi
+      - run:
+          name: "Run test"
+          command: make test
+      - run:
+          name: Build go
+          command: make build
+      - run:
+          name: Create a temporary directory for artifacts
+          command: mkdir -p /tmp/artifacts
+      - run:
+          name: Generate coverage
+          command: make test-cover OUT=<< parameters.version >>.out
+      - codecov/upload:
+          file: ./app/<< parameters.version >>.out
+
 workflows:
-    version: 2
-    build_and_test:
-        jobs:
-            - build
-            - golint:
-                requires:
-                    - build
-            - test:
-                requires:
-                    - build
+  tests:
+    jobs:
+      - lint:
+          matrix:
+            parameters:
+              version: ["1.20", "1.19"]
+      - test:
+          matrix:
+            parameters:
+              version: ["1.20", "1.19"]
