@@ -2,7 +2,7 @@ package controller
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/bmf-san/gobel-client-example/app/api"
@@ -45,7 +45,7 @@ func (cc *CategoryController) Index() http.Handler {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			cc.Logger.Error(err.Error())
 			cc.Presenter.Error(w, http.StatusInternalServerError)
@@ -68,9 +68,12 @@ func (cc *CategoryController) Index() http.Handler {
 			return
 		}
 
-		if err = cc.Presenter.ExecuteCategoryIndex(w, &presenter.CategoryIndex{
+		if err = cc.Presenter.ExecuteCategoryIndex(w, r, &presenter.CategoryIndex{
 			Categories: &categories,
-			Pagination: &pagination,
+			Pagination: &presenter.Pagination{
+				Pager:       &pagination,
+				QueryParams: "",
+			},
 		}); err != nil {
 			cc.Logger.Error(err.Error())
 			cc.Presenter.Error(w, http.StatusInternalServerError)

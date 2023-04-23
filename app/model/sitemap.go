@@ -3,6 +3,7 @@ package model
 // A URLSet represents the singular of urlset.
 type URLSet struct {
 	XMLName string `xml:"urlset"`
+	Version string `xml:"xmlns,attr"`
 	URLs    []URL  `xml:"url"`
 }
 

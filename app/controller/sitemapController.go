@@ -3,8 +3,9 @@ package controller
 import (
 	"encoding/json"
 	"encoding/xml"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 
 	"github.com/bmf-san/gobel-client-example/app/api"
 	"github.com/bmf-san/gobel-client-example/app/logger"
@@ -40,7 +41,7 @@ func (si *SitemapController) Index() http.Handler {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			si.Logger.Error(err.Error())
 			si.Presenter.Error(w, http.StatusInternalServerError)
@@ -64,7 +65,7 @@ func (si *SitemapController) Index() http.Handler {
 		}
 		defer resp.Body.Close()
 
-		body, err = ioutil.ReadAll(resp.Body)
+		body, err = io.ReadAll(resp.Body)
 		if err != nil {
 			si.Logger.Error(err.Error())
 			si.Presenter.Error(w, http.StatusInternalServerError)
@@ -88,7 +89,7 @@ func (si *SitemapController) Index() http.Handler {
 		}
 		defer resp.Body.Close()
 
-		body, err = ioutil.ReadAll(resp.Body)
+		body, err = io.ReadAll(resp.Body)
 		if err != nil {
 			si.Logger.Error(err.Error())
 			si.Presenter.Error(w, http.StatusInternalServerError)
@@ -104,35 +105,33 @@ func (si *SitemapController) Index() http.Handler {
 		}
 
 		var urlset model.URLSet
+		urlset.Version = "http://www.sitemaps.org/schemas/sitemap/0.9"
 
+		loc := os.Getenv("BASE_URL")
 		for _, s := range [...]string{"/", "/posts", "/categories", "/tags", "/sitemap", "/feed"} {
-			si.Client.URL.Path = s
 			url := model.URL{
-				Loc: si.Client.URL.String(),
+				Loc: loc + s,
 			}
 			urlset.URLs = append(urlset.URLs, url)
 		}
 
 		for _, p := range posts {
-			si.Client.URL.Path = "/posts/" + p.Title
 			url := model.URL{
-				Loc: si.Client.URL.String(),
+				Loc: loc + "/posts/" + p.Title,
 			}
 			urlset.URLs = append(urlset.URLs, url)
 		}
 
 		for _, c := range categories {
-			si.Client.URL.Path = "/posts/categories/" + c.Name
 			url := model.URL{
-				Loc: si.Client.URL.String(),
+				Loc: loc + "/posts/categories/" + c.Name,
 			}
 			urlset.URLs = append(urlset.URLs, url)
 		}
 
 		for _, t := range tags {
-			si.Client.URL.Path = "/posts/tags/" + t.Name
 			url := model.URL{
-				Loc: si.Client.URL.String(),
+				Loc: loc + "/posts/tags/" + t.Name,
 			}
 			urlset.URLs = append(urlset.URLs, url)
 		}
