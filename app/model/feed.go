@@ -7,14 +7,14 @@ import (
 
 // A Feed represents the singular of feed.
 type Feed struct {
-	XMLName  xml.Name    `xml:"http://www.w3.org/2005/Atom feed"`
-	Title    string      `xml:"title"`
-	Subtitle string      `xml:"subtitle"`
-	Link     FeedLink    `xml:"link"`
-	Updated  time.Time   `xml:"updated"`
-	Author   FeedAuthor  `xml:"author"`
-	ID       string      `xml:"id"`
-	Entries  []FeedEntry `xml:"entry"`
+	XMLName   xml.Name    `xml:"http://www.w3.org/2005/Atom feed"`
+	Title     string      `xml:"title"`
+	Subtitle  string      `xml:"subtitle"`
+	Link      FeedLink    `xml:"link"`
+	UpdatedAt time.Time   `xml:"updatedat"`
+	Author    FeedAuthor  `xml:"author"`
+	ID        string      `xml:"id"`
+	Entries   []FeedEntry `xml:"entry"`
 }
 
 // An FeedEntry represents the singular of entry.
@@ -22,8 +22,8 @@ type FeedEntry struct {
 	Title     string      `xml:"title"`
 	Link      FeedLink    `xml:"link"`
 	ID        string      `xml:"id"`
-	Updated   time.Time   `xml:"updated"`
-	Published time.Time   `xml:"published"`
+	UpdatedAt time.Time   `xml:"updatedat"`
+	CreatedAt time.Time   `xml:"createdat"`
 	Author    FeedAuthor  `xml:"author"`
 	Content   FeedContent `xml:"content"`
 }
